@@ -1,0 +1,8 @@
+{
+  "name": "science-quiz",
+  "version": "1.0.0",
+  "description": "AI-powered science quiz for Grade 5",
+  "dependencies": {
+    "node-fetch": "^2.6.1"
+  }
+}

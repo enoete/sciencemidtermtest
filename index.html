@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎯 Science Monster Quiz - Test Your Knowledge! 🎯</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        /* Password Screen */
+        .password-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            z-index: 9999;
+        }
+
+        .password-screen.hidden {
+            display: none;
+        }
+
+        .password-box {
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .password-box h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .password-box p {
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .password-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .password-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .password-error {
+            color: #dc3545;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            display: none;
+        }
+
+        .container.visible {
+            display: block;
+        }
+
+        h1 {
+            text-align: center;
+            color: #764ba2;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            animation: bounce 2s ease infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .quiz-intro {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .quiz-intro h2 {
+            color: #764ba2;
+            margin-bottom: 15px;
+        }
+
+        .quiz-intro ul {
+            margin-left: 30px;
+            line-height: 2;
+            font-size: 1.1em;
+        }
+
+        .question-card {
+            background: #f8f9fa;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            border-left: 5px solid #667eea;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: #f093fb;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            margin-left: 10px;
+            font-size: 0.9em;
+        }
+
+        .question-text {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 15px;
+            background: white;
+            border: 3px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.1em;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .option.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #f5576c;
+        }
+
+        .open-answer {
+            width: 100%;
+            min-height: 120px;
+            padding: 15px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-size: 1.05em;
+            font-family: Arial, sans-serif;
+            resize: vertical;
+        }
+
+        .submit-quiz-btn {
+            background: linear-gradient(135deg, #4caf50 0%, #81c784 100%);
+            color: white;
+            padding: 20px 50px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.5em;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 30px auto;
+            display: block;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+
+        .submit-quiz-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .submit-quiz-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading-spinner.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .quiz-results {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            display: none;
+        }
+
+        .quiz-results.show {
+            display: block;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .score-display h2 {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .score-display p {
+            font-size: 1.5em;
+        }
+
+        .result-section {
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+
+        .result-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .result-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border-left: 4px solid #ddd;
+        }
+
+        .result-item.correct {
+            border-left-color: #4caf50;
+        }
+
+        .result-item.incorrect {
+            border-left-color: #f44336;
+        }
+
+        .result-item.partial {
+            border-left-color: #ff9800;
+        }
+
+        .feedback-text {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Password Screen -->
+    <div class="password-screen" id="passwordScreen">
+        <div class="password-box">
+            <h1>🔒 Science Quiz</h1>
+            <p>Enter your password to begin</p>
+            <input type="password" class="password-input" id="passwordInput" placeholder="Enter password">
+            <button class="password-btn" onclick="checkPassword()">Start Quiz</button>
+            <p class="password-error" id="passwordError">❌ Incorrect password. Try again!</p>
+        </div>
+    </div>
+
+    <!-- Main Quiz Container -->
+    <div class="container" id="mainContainer">
+        <h1>🎯 Science Monster Quiz! 🎯</h1>
+        <p class="subtitle">Test Your Knowledge - All Topics Covered!</p>
+
+        <div class="quiz-intro">
+            <h2>📋 Quiz Instructions</h2>
+            <ul>
+                <li>This quiz covers <strong>ALL exam topics</strong> from both books</li>
+                <li>There are <strong>50+ questions</strong> total</li>
+                <li>Multiple choice questions are auto-graded</li>
+                <li>Open-ended questions are graded by AI</li>
+                <li>Answer ALL questions before submitting</li>
+                <li>Take your time and do your best!</li>
+            </ul>
+            <p style="margin-top: 15px; font-weight: bold; color: #764ba2;">Good luck, Adiaha! 🌟</p>
+        </div>
+
+        <div id="quizQuestions">
+            <!-- Questions will be inserted here by JavaScript -->
+        </div>
+
+        <button class="submit-quiz-btn" onclick="submitQuiz()" id="submitBtn">🎉 Submit Quiz! 🎉</button>
+
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p style="color: #667eea; font-weight: bold; font-size: 1.2em;">Grading your quiz... Please wait!</p>
+        </div>
+
+        <div class="quiz-results" id="quizResults">
+            <!-- Results will be inserted here -->
+        </div>
+    </div>
+
+    <script>
+        const correctPassword = "ilovemydaddy!!";
+        const userAnswers = {};
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const error = document.getElementById('passwordError');
+            
+            if (input === correctPassword) {
+                document.getElementById('passwordScreen').classList.add('hidden');
+                document.getElementById('mainContainer').classList.add('visible');
+                loadQuiz();
+            } else {
+                error.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        document.getElementById('passwordInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        // Quiz Questions Data
+        const quizQuestions = [
+            // CIRCULATORY SYSTEM (8 questions)
+            {
+                type: "multiple",
+                category: "Circulatory",
+                question: "What is the main function of the heart?",
+                options: ["Digest food", "Pump blood throughout the body", "Filter air", "Store minerals"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Circulatory",
+                question: "Which blood vessels carry blood AWAY from the heart?",
+                options: ["Veins", "Capillaries", "Arteries", "Nerves"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Circulatory",
+                question: "What are the tiniest blood vessels where oxygen moves to cells?",
+                options: ["Arteries", "Veins", "Capillaries", "Ligaments"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Circulatory",
+                question: "What is your normal resting heart rate (beats per minute)?",
+                options: ["20-30", "70-80", "150-160", "200-250"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Circulatory",
+                question: "What happens to your heart rate when you exercise?",
+                options: ["It stays the same", "It slows down", "It speeds up", "It stops"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Circulatory",
+                question: "What is the function of blood?",
+                options: ["Carry messages", "Carry oxygen and nutrients", "Digest food", "Filter air"],
+                correct: 1
+            },
+            {
+                type: "open",
+                category: "Circulatory",
+                question: "Explain what happens to your heart rate when you exercise and WHY this happens.",
+                rubric: "Good answer mentions: (1) heart rate increases/speeds up, (2) muscles need more oxygen, (3) heart pumps faster to deliver oxygen-rich blood. Bonus: mentions specific numbers like 70-80 at rest to 100-140 during exercise."
+            },
+            {
+                type: "open",
+                category: "Circulatory",
+                question: "Describe the path blood takes through your body, starting from the heart.",
+                rubric: "Good answer mentions: (1) heart pumps blood, (2) through arteries, (3) to capillaries where oxygen is delivered, (4) veins carry blood back to heart. Should show understanding of circulation in logical order."
+            },
+
+            // DIGESTIVE SYSTEM (9 questions)
+            {
+                type: "multiple",
+                category: "Digestive",
+                question: "Where does digestion begin?",
+                options: ["Stomach", "Mouth", "Small Intestine", "Esophagus"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Digestive",
+                question: "What does the esophagus do?",
+                options: ["Absorbs nutrients", "Stores food", "Moves food from mouth to stomach", "Makes bile"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Digestive",
+                question: "Which organ is 20 feet long and absorbs nutrients into the blood?",
+                options: ["Stomach", "Large Intestine", "Small Intestine", "Esophagus"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Digestive",
+                question: "What does bile (made by the liver) help break down?",
+                options: ["Proteins", "Fats", "Vitamins", "Water"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Digestive",
+                question: "What is the main job of the large intestine?",
+                options: ["Break down proteins", "Absorb water and minerals", "Make enzymes", "Pump blood"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Digestive",
+                question: "What is mechanical digestion?",
+                options: ["Using chemicals to break down food", "Using teeth to chew food", "Using bile to dissolve food", "Using blood to carry food"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Digestive",
+                question: "Which organ produces digestive enzymes that break down carbs, proteins, and fats?",
+                options: ["Liver", "Pancreas", "Stomach", "Gallbladder"],
+                correct: 1
+            },
+            {
+                type: "open",
+                category: "Digestive",
+                question: "Describe the journey of food through the digestive system. Include at least 4 organs in the correct order.",
+                rubric: "Must mention at least 4 organs in correct order: mouth → esophagus → stomach → small intestine → large intestine. Bonus points for mentioning what happens at each organ (chewing, moving, acid breakdown, nutrient absorption, water absorption)."
+            },
+            {
+                type: "open",
+                category: "Digestive",
+                question: "Explain the difference between mechanical and chemical digestion. Give one example of each.",
+                rubric: "Good answer defines: (1) mechanical = physical breakdown (chewing with teeth), (2) chemical = breaking down with enzymes/acids (saliva in mouth, stomach acid). Must include examples for both."
+            },
+
+            // RESPIRATORY SYSTEM (8 questions)
+            {
+                type: "multiple",
+                category: "Respiratory",
+                question: "What is the main function of the respiratory system?",
+                options: ["Digest food", "Supply oxygen and remove carbon dioxide", "Pump blood", "Send messages"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Respiratory",
+                question: "What is the trachea?",
+                options: ["Your nose", "Your windpipe", "Your lungs", "Your diaphragm"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Respiratory",
+                question: "Where does gas exchange happen (oxygen enters blood, CO2 leaves)?",
+                options: ["Nose", "Trachea", "Alveoli", "Diaphragm"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Respiratory",
+                question: "What muscle controls breathing?",
+                options: ["Heart", "Bicep", "Diaphragm", "Stomach"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Respiratory",
+                question: "What do the nose hairs do?",
+                options: ["Make mucus", "Filter dust and dirt", "Warm the blood", "Carry oxygen"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Respiratory",
+                question: "How many times do you breathe per minute at rest?",
+                options: ["5-10", "12-20", "50-60", "100-120"],
+                correct: 1
+            },
+            {
+                type: "open",
+                category: "Respiratory",
+                question: "Explain how breathing works. What happens when you inhale and exhale?",
+                rubric: "Good answer explains: (1) Inhale: diaphragm moves down, lungs expand, air rushes in; (2) Exhale: diaphragm moves up, lungs squeeze, air pushes out. Bonus: mentions oxygen going into blood and CO2 leaving."
+            },
+            {
+                type: "open",
+                category: "Respiratory",
+                question: "What is the purpose of the alveoli in your lungs?",
+                rubric: "Must mention: (1) tiny air sacs in lungs, (2) where gas exchange happens, (3) oxygen enters blood and carbon dioxide leaves blood. Bonus: mentions millions of alveoli or that blood cells go single file through capillaries."
+            },
+
+            // NERVOUS SYSTEM (7 questions)
+            {
+                type: "multiple",
+                category: "Nervous",
+                question: "What is the main function of the nervous system?",
+                options: ["Pump blood", "Digest food", "Send and receive signals to control body", "Filter air"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Nervous",
+                question: "Which part of the brain controls thinking, memory, and decision-making?",
+                options: ["Cerebellum", "Brain Stem", "Cerebrum", "Spinal Cord"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Nervous",
+                question: "Which part of the brain controls balance and coordination?",
+                options: ["Cerebrum", "Cerebellum", "Brain Stem", "Nerves"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Nervous",
+                question: "What does the brain stem control?",
+                options: ["Thinking", "Balance", "Automatic functions like breathing and heartbeat", "Vision"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Nervous",
+                question: "What are the five senses?",
+                options: ["Sight, hearing, smell, taste, touch", "Sight, balance, smell, taste, hearing", "Vision, running, eating, sleeping, breathing", "Thinking, seeing, hearing, tasting, feeling"],
+                correct: 0
+            },
+            {
+                type: "open",
+                category: "Nervous",
+                question: "Explain what happens when you touch something hot. How do your nerves and brain work together?",
+                rubric: "Good answer shows sequence: (1) skin sensors detect heat, (2) nerves send 'DANGER' message to brain, (3) brain processes info and sends 'MOVE HAND' message, (4) muscles move hand away. Bonus: mentions this happens in less than 1 second."
+            },
+            {
+                type: "open",
+                category: "Nervous",
+                question: "Name the three main parts of the brain and describe what each one does.",
+                rubric: "Must identify all three: (1) Cerebrum - thinking, memory, decisions, voluntary movement; (2) Cerebellum - balance, coordination, smooth movement; (3) Brain Stem - automatic functions like breathing, heartbeat, digestion."
+            },
+
+            // MUSCULOSKELETAL SYSTEM (8 questions)
+            {
+                type: "multiple",
+                category: "Musculoskeletal",
+                question: "How many bones does the human body have?",
+                options: ["106", "206", "306", "406"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Musculoskeletal",
+                question: "What connects muscles to bones?",
+                options: ["Ligaments", "Tendons", "Cartilage", "Nerves"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Musculoskeletal",
+                question: "What connects bones to other bones?",
+                options: ["Tendons", "Muscles", "Ligaments", "Blood vessels"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Musculoskeletal",
+                question: "Which type of muscle do YOU control?",
+                options: ["Cardiac muscle", "Smooth muscle", "Skeletal muscle", "All muscles"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Musculoskeletal",
+                question: "What is cartilage?",
+                options: ["A type of bone", "Squishy padding that cushions joints", "A muscle", "A blood vessel"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Musculoskeletal",
+                question: "What are bones made of?",
+                options: ["Iron", "Calcium", "Plastic", "Wood"],
+                correct: 1
+            },
+            {
+                type: "open",
+                category: "Musculoskeletal",
+                question: "Explain the difference between the three types of muscles: skeletal, smooth, and cardiac.",
+                rubric: "Must describe all three: (1) Skeletal - YOU control, attach to bones, move body; (2) Smooth - automatic, in organs like stomach/intestines; (3) Cardiac - heart muscle, automatic, never stops. Bonus: mentions examples of where each is found."
+            },
+            {
+                type: "open",
+                category: "Musculoskeletal",
+                question: "How do muscles and bones work together to help you move?",
+                rubric: "Good answer explains: (1) muscles attach to bones with tendons, (2) when muscles contract (tighten) they pull on bones, (3) bones move at joints, (4) this creates movement. Should show understanding of the muscle-tendon-bone connection."
+            },
+
+            // STATES OF MATTER (8 questions)
+            {
+                type: "multiple",
+                category: "Matter",
+                question: "What is matter?",
+                options: ["Only things you can see", "Anything that has mass and takes up space", "Only liquids", "Only solids"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Matter",
+                question: "Which state of matter has a fixed shape and volume?",
+                options: ["Gas", "Liquid", "Solid", "Plasma"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Matter",
+                question: "Which state of matter takes the shape of its container but has a fixed volume?",
+                options: ["Solid", "Liquid", "Gas", "Ice"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Matter",
+                question: "Which state of matter has NO fixed shape or volume?",
+                options: ["Solid", "Liquid", "Gas", "Water"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Matter",
+                question: "What happens when a liquid turns into a solid?",
+                options: ["Melting", "Freezing", "Evaporation", "Condensation"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Matter",
+                question: "What happens when a liquid turns into a gas?",
+                options: ["Freezing", "Melting", "Evaporation", "Condensation"],
+                correct: 2
+            },
+            {
+                type: "open",
+                category: "Matter",
+                question: "Describe the three states of matter and give one example of each.",
+                rubric: "Must define all three states: (1) Solid - fixed shape and volume (examples: ice, rock, wood); (2) Liquid - fixed volume, takes shape of container (examples: water, juice, milk); (3) Gas - no fixed shape or volume (examples: air, steam, oxygen). Must include examples."
+            },
+            {
+                type: "open",
+                category: "Matter",
+                question: "Explain what happens to water molecules when water freezes into ice.",
+                rubric: "Good answer explains: (1) water loses heat/thermal energy, (2) molecules slow down, (3) molecules lock into place/fixed positions, (4) becomes solid ice. Should mention molecule movement and energy."
+            },
+
+            // THERMAL ENERGY (6 questions)
+            {
+                type: "multiple",
+                category: "Thermal Energy",
+                question: "What is thermal energy?",
+                options: ["Energy from the sun", "Heat energy from moving molecules", "Energy from food", "Energy from water"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Thermal Energy",
+                question: "Which heat transfer method requires direct contact?",
+                options: ["Radiation", "Convection", "Conduction", "Evaporation"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Thermal Energy",
+                question: "Which heat transfer method involves flowing liquids or gases?",
+                options: ["Conduction", "Convection", "Radiation", "Sublimation"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Thermal Energy",
+                question: "Which heat transfer method can travel through empty space?",
+                options: ["Conduction", "Convection", "Radiation", "Freezing"],
+                correct: 2
+            },
+            {
+                type: "open",
+                category: "Thermal Energy",
+                question: "Explain the three methods of heat transfer: conduction, convection, and radiation. Give an example of each.",
+                rubric: "Must define all three: (1) Conduction - direct contact (example: metal spoon in hot chocolate); (2) Convection - flow of liquids/gases, hot rises/cold sinks (example: boiling water); (3) Radiation - heat through waves/empty space (example: sun warming face). Must include examples."
+            },
+            {
+                type: "open",
+                category: "Thermal Energy",
+                question: "When you boil water, which method of heat transfer is happening? Explain.",
+                rubric: "Good answer identifies: (1) Convection is the main method, (2) explains hot water rises to top, cold water sinks to bottom, (3) creates circular flow pattern. Bonus: may also mention conduction from pot to water at bottom."
+            },
+
+            // PHYSICAL PROPERTIES (4 questions)
+            {
+                type: "multiple",
+                category: "Properties",
+                question: "What is lustre?",
+                options: ["How hard something is", "How light reflects off a surface", "How heavy something is", "How hot something is"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Properties",
+                question: "Which property describes whether you can see through something?",
+                options: ["Hardness", "Magnetism", "Transparency", "Lustre"],
+                correct: 2
+            },
+            {
+                type: "multiple",
+                category: "Properties",
+                question: "Which materials are magnetic?",
+                options: ["Wood and plastic", "Iron, nickel, and cobalt", "Glass and water", "Paper and cloth"],
+                correct: 1
+            },
+            {
+                type: "open",
+                category: "Properties",
+                question: "List and describe 3 physical properties scientists use to identify materials.",
+                rubric: "Must list and describe 3 properties from: lustre (how shiny), transparency (can you see through it), hardness (resistance to scratching), magnetism (attracts magnetic materials), color (reflected light), streak (powder color). Each property should have a brief description."
+            },
+
+            // RECYCLING & WATER CYCLE (6 questions)
+            {
+                type: "multiple",
+                category: "Recycling",
+                question: "What is recycling?",
+                options: ["Throwing things away", "Collecting and processing used materials to make new products", "Burning trash", "Burying waste"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Recycling",
+                question: "Why is recycling important?",
+                options: ["It's fun", "It saves resources and reduces waste", "It makes things colorful", "It's required by law"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Water Cycle",
+                question: "What is evaporation?",
+                options: ["Water falling from clouds", "Water turning from liquid to gas", "Water turning from gas to liquid", "Water freezing"],
+                correct: 1
+            },
+            {
+                type: "multiple",
+                category: "Water Cycle",
+                question: "What is condensation?",
+                options: ["Water turning from liquid to gas", "Water turning from gas to liquid", "Water falling as rain", "Water freezing"],
+                correct: 1
+            },
+            {
+                type: "open",
+                category: "Recycling",
+                question: "Describe the process of recycling aluminum cans from start to finish.",
+                rubric: "Must include steps: (1) can put in recycling bin, (2) truck takes to factory, (3) machines shred can, (4) furnace melts aluminum into ingot, (5) rollers flatten into sheets, (6) new cans made. Bonus: mentions timeline (60 days) or benefits."
+            },
+            {
+                type: "open",
+                category: "Water Cycle",
+                question: "Explain the water cycle. Include all 4 main steps.",
+                rubric: "Must include all 4 steps in logical order: (1) Evaporation - sun heats water, turns to vapor, rises; (2) Condensation - vapor cools, forms droplets, makes clouds; (3) Precipitation - droplets get heavy, fall as rain/snow/sleet/hail; (4) Collection - water collects in oceans/rivers/lakes, cycle repeats."
+            }
+        ];
+
+        function loadQuiz() {
+            const container = document.getElementById('quizQuestions');
+            container.innerHTML = '';
+
+            quizQuestions.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card';
+                
+                let questionHTML = `
+                    <div>
+                        <span class="question-number">Question ${index + 1}</span>
+                        <span class="category-badge">${q.category}</span>
+                    </div>
+                    <div class="question-text">${q.question}</div>
+                `;
+
+                if (q.type === 'multiple') {
+                    questionHTML += '<div class="options">';
+                    q.options.forEach((option, optIndex) => {
+                        questionHTML += `
+                            <div class="option" onclick="selectOption(${index}, ${optIndex})">
+                                ${String.fromCharCode(65 + optIndex)}. ${option}
+                            </div>
+                        `;
+                    });
+                    questionHTML += '</div>';
+                } else if (q.type === 'open') {
+                    questionHTML += `
+                        <textarea class="open-answer" id="answer-${index}" 
+                                  placeholder="Write your answer here in complete sentences..."></textarea>
+                    `;
+                }
+
+                card.innerHTML = questionHTML;
+                container.appendChild(card);
+            });
+        }
+
+        function selectOption(questionIndex, optionIndex) {
+            const card = document.querySelectorAll('.question-card')[questionIndex];
+            const options = card.querySelectorAll('.option');
+            
+            options.forEach(opt => opt.classList.remove('selected'));
+            options[optionIndex].classList.add('selected');
+            
+            userAnswers[questionIndex] = optionIndex;
+        }
+
+        async function submitQuiz() {
+            // Collect all answers
+            const answers = {};
+            
+            // Collect multiple choice answers
+            for (let i = 0; i < quizQuestions.length; i++) {
+                if (quizQuestions[i].type === 'multiple') {
+                    if (userAnswers[i] === undefined) {
+                        alert(`Please answer Question ${i + 1} before submitting!`);
+                        return;
+                    }
+                    answers[i] = {
+                        type: 'multiple',
+                        answer: userAnswers[i],
+                        correct: quizQuestions[i].correct
+                    };
+                } else if (quizQuestions[i].type === 'open') {
+                    const textarea = document.getElementById(`answer-${i}`);
+                    if (!textarea.value.trim()) {
+                        alert(`Please answer Question ${i + 1} before submitting!`);
+                        return;
+                    }
+                    answers[i] = {
+                        type: 'open',
+                        answer: textarea.value,
+                        question: quizQuestions[i].question,
+                        rubric: quizQuestions[i].rubric
+                    };
+                }
+            }
+
+            // Show loading
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('loadingSpinner').classList.add('show');
+
+            try {
+                // Grade open-ended questions with AI
+                const openEndedQuestions = Object.entries(answers)
+                    .filter(([_, a]) => a.type === 'open')
+                    .map(([index, a]) => ({
+                        index: parseInt(index),
+                        question: a.question,
+                        answer: a.answer,
+                        rubric: a.rubric
+                    }));
+
+                let aiGradedResults = {};
+                
+                if (openEndedQuestions.length > 0) {
+                    const response = await fetch('/.netlify/functions/grade-science', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ questions: openEndedQuestions })
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Failed to grade open-ended questions');
+                    }
+
+                    const result = await response.json();
+                    aiGradedResults = result.grades;
+                }
+
+                // Calculate results
+                displayResults(answers, aiGradedResults);
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('There was an error grading your quiz. Please try again.');
+            } finally {
+                document.getElementById('loadingSpinner').classList.remove('show');
+            }
+        }
+
+        function displayResults(answers, aiGrades) {
+            let totalPoints = 0;
+            let earnedPoints = 0;
+            const resultsHTML = [];
+
+            Object.entries(answers).forEach(([index, answer]) => {
+                const question = quizQuestions[index];
+                let points = 0;
+                let maxPoints = 1;
+                let feedback = '';
+
+                if (answer.type === 'multiple') {
+                    if (answer.answer === answer.correct) {
+                        points = 1;
+                        feedback = '✅ Correct!';
+                    } else {
+                        feedback = `❌ Incorrect. The correct answer is: ${question.options[answer.correct]}`;
+                    }
+                } else if (answer.type === 'open') {
+                    maxPoints = 2;
+                    if (aiGrades[index]) {
+                        points = aiGrades[index].score;
+                        feedback = aiGrades[index].feedback;
+                    }
+                }
+
+                totalPoints += maxPoints;
+                earnedPoints += points;
+
+                const status = points === maxPoints ? 'correct' : (points > 0 ? 'partial' : 'incorrect');
+                
+                resultsHTML.push(`
+                    <div class="result-item ${status}">
+                        <strong>Q${parseInt(index) + 1}: ${question.question}</strong>
+                        <div style="margin-top: 10px;">
+                            <strong>Your Answer:</strong> ${answer.answer.length ? answer.answer : question.options[answer.answer]}
+                        </div>
+                        <div class="feedback-text">${feedback}</div>
+                        <div style="margin-top: 5px; font-weight: bold; color: #667eea;">
+                            Score: ${points}/${maxPoints} points
+                        </div>
+                    </div>
+                `);
+            });
+
+            const percentage = Math.round((earnedPoints / totalPoints) * 100);
+            let emoji = '🌟';
+            let message = 'Great job!';
+            
+            if (percentage >= 90) {
+                emoji = '🏆';
+                message = 'OUTSTANDING! You\'re a science SUPERSTAR! 🌟';
+            } else if (percentage >= 80) {
+                emoji = '⭐';
+                message = 'EXCELLENT work! You really know your stuff!';
+            } else if (percentage >= 70) {
+                emoji = '👍';
+                message = 'Good job! Keep studying and you\'ll ace that test!';
+            } else if (percentage >= 60) {
+                emoji = '📚';
+                message = 'Keep practicing! Review the study guide!';
+            } else {
+                emoji = '💪';
+                message = 'Keep working hard! Study the flip cards and try again!';
+            }
+
+            const resultsDiv = document.getElementById('quizResults');
+            resultsDiv.innerHTML = `
+                <div class="score-display">
+                    <div style="font-size: 4em; margin-bottom: 20px;">${emoji}</div>
+                    <h2>${message}</h2>
+                    <p style="font-size: 2em; margin-top: 20px;">Score: ${earnedPoints}/${totalPoints} points</p>
+                    <p style="font-size: 1.5em;">${percentage}%</p>
+                </div>
+                <div class="result-section">
+                    <h3>📝 Detailed Results</h3>
+                    ${resultsHTML.join('')}
+                </div>
+            `;
+            
+            resultsDiv.classList.add('show');
+            resultsDiv.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    </script>
+</body>
+</html>
