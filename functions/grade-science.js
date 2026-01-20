@@ -49,29 +49,36 @@ Provide your response in this exact JSON format:
   "feedback": "<Encouraging feedback explaining the score. Be specific about what was good and what could be improved. Keep it friendly and encouraging for a 10-year-old student.>"
 }`;
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': OPENAI_API_KEY,
-          'anthropic-version': '2023-06-01'
+          'Authorization': `Bearer ${OPENAI_API_KEY}`
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 500,
-          messages: [{
-            role: 'user',
-            content: prompt
-          }]
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a helpful and encouraging teacher grading a 10-year-old student\'s science exam. Provide constructive feedback in JSON format.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature: 0.3,
+          max_tokens: 500
         })
       });
 
       if (!response.ok) {
-        throw new Error(`API request failed: ${response.statusText}`);
+        const errorData = await response.text();
+        throw new Error(`OpenAI API request failed: ${response.status} ${errorData}`);
       }
 
       const data = await response.json();
-      const text = data.content[0].text;
+      const text = data.choices[0].message.content;
       
       // Extract JSON from the response
       const jsonMatch = text.match(/\{[\s\S]*\}/);
@@ -83,7 +90,8 @@ Provide your response in this exact JSON format:
       
       return {
         index: q.index,
-        ...result
+        score: result.score,
+        feedback: result.feedback
       };
     });
 
