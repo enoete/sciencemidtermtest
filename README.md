@@ -56,7 +56,6 @@ Create a completely separate site for the quiz.
    - Go to Site settings → Environment variables
    - Click "Add a variable"
    - Key: `OPENAI_API_KEY`
-   - Value: `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`
    - Click "Save"
    - **IMPORTANT:** Go to "Deploys" and click "Trigger deploy" → "Clear cache and deploy"
 
